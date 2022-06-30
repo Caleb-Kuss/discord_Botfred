@@ -38,7 +38,7 @@ async def add_game(ctx, game):
             await ctx.send(f"The game {game} already exists in the database!")
         else:    
             add_game_to_DB(game)
-            await ctx.send(f"Game added!")
+            await ctx.send(f"SUCCESS!")
     else:
         await ctx.send(f"Only an administrator can add a game")
 
@@ -58,14 +58,14 @@ async def list_games(ctx):
     '''
     !list_games  This command will list the Titles of all the games in the DataBase
     '''
-    try:
-        games = list_of_games.find({})
-        for game in games: 
-            title = game  
-            if title:
-                await ctx.send(f'{title["game"]}')
-    except:
-        await ctx.send('There are no games yet!')
+    # whats going on with the if statement?
+    games = list_of_games.find({})
+    for game in games: 
+        if game:
+            await ctx.send(f'{game["game"]}')
+        else:
+            await ctx.send('There are no games yet!')
+  
 
 
 
@@ -184,58 +184,73 @@ async def gamers(ctx,game):
             try:
                 await ctx.send(msg)
             except Exception as e:
-                print(f'await error: {e.message}')
+                print(f'await error: {e}')
     return
+
+# BotFred apologizes for master
+@bot.command()
+async def apologize(ctx, user):
+    '''
+    !apologize This is for NoPurps
+    '''
+    if ctx.message.author.guild_permissions.administrator:
+        if user:
+            await ctx.send(f'Apologies <@{user}>, my master is busy and will not be able to game at this time.')  
+    else:
+        await ctx.send(f'Bitch, you are not my master! Toss me a beer on your way out.')
+
+
 
 
 # Change the default !help command
 @bot.command()
 async def help(ctx):
-    try:
-        embed = discord.Embed(
-            title = 'The Help Section',
-            description = 'Welcome to the help section. Here you will find all of the commands for the server.',
-            color = discord.Color.red()
-        )
-        embed.add_field(
-            name='!add_game "somegame" **ADMIN ONLY**',
-            value = 'This command will add a game to the list of games DO NOT use spaces in the title of the game.',
-            inline=False
-        )
-        embed.add_field(
-            name='!list_games',
-            value = 'This command will list the Titles of all the games in the DataBase.',
-            inline=False
-        )
-        embed.add_field(
-            name='!remove_game "somegame" **ADMIN ONLY**',
-            value = 'This command will remove the Title of the game in the DataBase.',
-            inline=False
-        )
-        embed.add_field(
-            name='!add_to_game "somegame"',
-            value = 'This command will add you to a games list.',
-            inline=False
-        )
-        embed.add_field(
-            name='!remove_from_game "somegame"',
-            value = 'This command will remove you from a games list',
-            inline=False
-        )
-        embed.add_field(
-            name='!my_games',
-            value = 'command will list the games you are apart of.',
-            inline=False
-        )
-        embed.add_field(
-            name='!gamers "somegame"',
-            value = 'alerts all users in the game list you are online and playing the game specified.',
-            inline=False
-        )
-        await ctx.send(embed=embed)
-    except Exception as e:
-        print(f'the error {e}')
-
+    embed = discord.Embed(
+        title = 'The Help Section',
+        description = 'Welcome to the help section. Here you will find all of the commands for the server.',
+        color = discord.Color.red()
+    )
+    embed.add_field(
+        name='!add_game "somegame" **ADMIN ONLY**',
+        value = 'This command will add a game to the list of games DO NOT use spaces in the title of the game.',
+        inline=False
+    )
+    embed.add_field(
+        name='!list_games',
+        value = 'This command will list the Titles of all the games in the DataBase.',
+        inline=False
+    )
+    embed.add_field(
+        name='!remove_game "somegame" **ADMIN ONLY**',
+        value = 'This command will remove the Title of the game in the DataBase.',
+        inline=False
+    )
+    embed.add_field(
+        name='!add_to_game "somegame"',
+        value = 'This command will add you to a games list.',
+        inline=False
+    )
+    embed.add_field(
+        name='!remove_from_game "somegame"',
+        value = 'This command will remove you from a games list',
+        inline=False
+    )
+    embed.add_field(
+        name='!my_games',
+        value = 'command will list the games you are apart of.',
+        inline=False
+    )
+    embed.add_field(
+        name='!gamers "somegame"',
+        value = 'alerts all users in the game list you are online and playing the game specified.',
+        inline=False
+    )
+    embed.add_field(
+        name = '!apologize',
+        value ='This is for NoPurps',
+        inline=False
+    )
+    await ctx.send(embed=embed)
 
 bot.run(TOKEN)
 
