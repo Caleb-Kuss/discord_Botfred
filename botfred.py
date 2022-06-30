@@ -66,9 +66,6 @@ async def list_games(ctx):
         else:
             await ctx.send('There are no games yet!')
   
-
-
-
 #remove games command
 @bot.command()
 async def remove_game(ctx, game):
