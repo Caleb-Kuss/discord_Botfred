@@ -77,20 +77,17 @@ async def remove_game(ctx, game):
     
     '''
     game = game.lower()
-    try:
-        if ctx.message.author.guild_permissions.administrator:
-            games = list_of_games.find({})
-            for title in games:
-                target = title['game']
-            if game == target:
-                list_of_games.delete_one({'game': game})
-                await ctx.send(f'{game} was deleted')
-            else:
-                await ctx.send(f'The game {game} was not found')    
+    if ctx.message.author.guild_permissions.administrator:
+        games = list_of_games.find({})
+        for title in games:
+            target = title['game']
+        if game == target:
+            list_of_games.delete_one({'game': game})
+            await ctx.send(f'{game} was deleted')
         else:
-            await ctx.send(f'Bitch, you are not an administrator!')
-    except Exception as e:
-        print(e)    
+            await ctx.send(f'The game {game} was not found')    
+    else:
+        await ctx.send(f'Bitch, you are not an administrator!')    
 
 # add a user to the game list command
 @bot.command()
@@ -100,46 +97,40 @@ async def add_to_game(ctx, game):
     
     '''
     game = game.lower()
-    try:
-        if ctx.author == ctx.author:
-            games = list_of_games.find({})
-            for title in games:
-                obj_id= title['_id']
-                target = title['game']
-                if target == game:
-                    if game not in target:
-                        await ctx.send(f'This {game} does not exist!')
-                    elif game in target and ctx.author.name not in title['name']:
-                        list_of_games.update_one({"_id":ObjectId(obj_id)},{"$push":{"number":ctx.author.id, 'name':ctx.author.name}})
-                        await ctx.send(f'{ctx.author.name} added to {game}')
-                    else:
-                        await ctx.send(f'{ctx.author.name} is already on {game}\'s game list')   
-        else:
-            await ctx.send(f'You can only add yourself to a game!')
-    except Exception as e:
-        print(f' This is the exception{e}')
+    if ctx.author == ctx.author:
+        games = list_of_games.find({})
+        for title in games:
+            obj_id = title['_id']
+            target = title['game']
+            if target == game:
+                if game not in target:
+                    await ctx.send(f'This {game} does not exist!')
+                elif game in target and ctx.author.name not in title['name']:
+                    list_of_games.update_one({"_id":ObjectId(obj_id)},{"$push":{"number":ctx.author.id, 'name':ctx.author.name}})
+                    await ctx.send(f'{ctx.author.name} added to {game}')
+                else:
+                    await ctx.send(f'{ctx.author.name} is already on {game}\'s game list')   
+    else:
+        await ctx.send(f'You can only add yourself to a game!')
 @bot.command()
 async def remove_from_game(ctx, game):
     '''
     !remove_from_game  This command will remove you from a games list
     
     '''
-    # Commented out the section for User specific for being removed from the game list.
-    try:
-        if ctx.author == ctx.author:
-            games = list_of_games.find({})
-            for title in games:
-                obj_id= title['_id']
-                target = title['game']
-                if target == game and ctx.author.name in title['name']:
-                    list_of_games.update_one({"_id":ObjectId(obj_id)},{"$pull" : {"number":ctx.author.id, "name":ctx.author.name}})
-                    await ctx.send(f'{ctx.author.name} removed from {game}')    
-                elif  target == game and ctx.author.name not in title['name']:
-                    await ctx.send(f'{ctx.author.name} is not on {game}\'s game list')
-        else:
-            await ctx.send(f'You are not authorized remove {ctx.author.name} from the game {game}')
-    except Exception as e:
-        print(f' This is the exception{e}')
+    if ctx.author == ctx.author:
+        games = list_of_games.find({})
+        for title in games:
+            obj_id= title['_id']
+            target = title['game']
+            if target == game and ctx.author.name in title['name']:
+                list_of_games.update_one({"_id":ObjectId(obj_id)},{"$pull" : {"number":ctx.author.id, "name":ctx.author.name}})
+                await ctx.send(f'{ctx.author.name} removed from {game}!')    
+            elif  target == game and ctx.author.name not in title['name']:
+                await ctx.send(f'You are not on {game}\'s game list!')
+    else:
+        await ctx.send(f'Are you who you say you are?! 😵')
+
 
 # List your games command
 @bot.command()
@@ -147,19 +138,15 @@ async def my_games(ctx):
     '''
     !my_games command will list the games you are apart of.
     '''
-    try:
-        if ctx.author == ctx.author:
-            games = list_of_games.find({})
-            for title in games:
-                target = title['game']
-                if 'name' not in title:
-                    return
-                elif 'name' in title and ctx.author.name in title['name']:
-                    await ctx.send(f'{target}')
-        else:
-            await ctx.send(f'Are you who you say you are?!')
-    except Exception as e:
-        print(f'this is an ERROR {e}')
+    if ctx.author == ctx.author:
+        games = list_of_games.find({})
+        for title in games:
+            target = title['game']
+            if 'name' in title and ctx.author.name in title['name']:
+                await ctx.send(f'{target}')
+        return
+    else:
+        await ctx.send(f'Are you who you say you are?! 😵')
 
 @bot.command()
 async def gamers(ctx,game):
