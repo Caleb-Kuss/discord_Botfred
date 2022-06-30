@@ -166,22 +166,27 @@ async def gamers(ctx,game):
     '''
     !gamers somegame alerts all users in the game list you are online and playing the game specified.
     '''
+    msg = 'This game list is pretty lonely 😢'
     game = game.lower()
     author = ctx.author
-    try:
-        games = list_of_games.find({})
-        for dict in games:
-            num = dict.get('number')
-            if 'number' in dict == [] and 'game' not in dict and 'name' in dict == []:
-                return
-            elif  game == dict['game']:
-                if author.id in num:
-                    num.remove(author.id)
-                    id_list_as_string = '> <@'.join(map(str, num))
-                    new_id_list = f'<@{id_list_as_string}>'
-                    await ctx.send(f'{new_id_list}, {author.name} is on playing {game}')
-    except Exception as e:
-        print(f'this is an ERROR {e}')
+    games = list_of_games.find({})
+    for dict in games:
+        num = dict.get('number')
+        if game == dict['game'] and author.id in num:
+            print(f'id: {author.id}')
+            num.remove(author.id)
+            print(f'num: {num}')
+            id_list_as_string = '> <@'.join(map(str, num))
+            print(f'list string: {id_list_as_string}')
+            new_id_list = None if id_list_as_string == '' else f'<@{id_list_as_string}>'
+            if new_id_list is not None:
+                msg = f'{new_id_list}, {author.name} is on playing {game}'
+            try:
+                await ctx.send(msg)
+            except Exception as e:
+                print(f'await error: {e.message}')
+    return
+
 
 # Change the default !help command
 @bot.command()
