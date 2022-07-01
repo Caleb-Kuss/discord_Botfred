@@ -28,19 +28,22 @@ list_of_games = db.games_list
 
 # add game command
 @bot.command()
-async def add_game(ctx, game, image, description):
+async def add_game(ctx, game, image, description, err):
     '''
     !add_game "somegame" "(URL for the image)" "game description"  you must wrap all parameters in quotes. This command will add a game, image, and a description. 
     '''
     game = game.upper()
     if ctx.message.author.guild_permissions.administrator:
         if list_of_games.find_one({"game":game}):
-            await ctx.send(f"The game {game} already exists in the database!")
-        else:    
+            await ctx.send(f"The game {game} already exists in the database!", delete_after=60)
+            await ctx.message.delete(delay=1)
+        else:   
             add_game_to_DB(game, image, description)
-            await ctx.send(f"SUCCESS!")
+            await ctx.send(f"SUCCESS!", delete_after=60)
+            await ctx.message.delete(delay=1)
     else:
-        await ctx.send(f"Only an administrator can add a game")
+        await ctx.send(f"Only an administrator can add a game", delete_after=60)
+        await ctx.message.delete(delay=1)
 
 # add game to DB
 def add_game_to_DB(game,image, description):
@@ -91,8 +94,10 @@ async def list_games(ctx):
         if gamers_list != '':
             user = bot.get_user(ctx.author.id) or await bot.fetch_user(ctx.author.id)
             await user.send(embed=embed)
+            await ctx.message.delete(delay=1)
         else:
             await user.send(embed=empty_gamers)
+            await ctx.message.delete(delay=1)
     return
 #remove games command
 @bot.command()
@@ -108,11 +113,14 @@ async def remove_game(ctx, game):
             target = title['game']
         if game == target:
             list_of_games.delete_one({'game': game})
-            await ctx.send(f'{game} was deleted')
+            await ctx.send(f'{game} was deleted', delete_after=60)
+            await ctx.message.delete(delay=1)
         else:
-            await ctx.send(f'The game {game} was not found')    
+            await ctx.send(f'The game {game} was not found', delete_after=60)    
+            await ctx.message.delete(delay=1)
     else:
-        await ctx.send(f'Bitch, you are not an administrator!')    
+        await ctx.send(f'Bitch, you are not an administrator!', delete_after=60)
+        await ctx.message.delete(delay=1)    
 
 # add a user to the game list command
 @bot.command()
@@ -132,11 +140,14 @@ async def add_to_game(ctx, game):
                     await ctx.send(f'This {game} does not exist!')
                 elif game in target and ctx.author.name not in title['name']:
                     list_of_games.update_one({"_id":ObjectId(obj_id)},{"$push":{"number":ctx.author.id, 'name':ctx.author.name}})
-                    await ctx.send(f'{ctx.author.name} added to {game}')
+                    await ctx.send(f'{ctx.author.name} added to {game}', delete_after=60)
+                    await ctx.message.delete(delay=1)
                 else:
-                    await ctx.send(f'{ctx.author.name} is already on {game}\'s game list')   
+                    await ctx.send(f'{ctx.author.name} is already on {game}\'s game list', delete_after=60),
+                    await ctx.message.delete(delay=1)   
     else:
-        await ctx.send(f'You can only add yourself to a game!')
+        await ctx.send(f'You can only add yourself to a game!', delete_after=60)
+        await ctx.message.delete(delay=1)
 @bot.command()
 async def remove_from_game(ctx, game):
     '''
@@ -150,11 +161,14 @@ async def remove_from_game(ctx, game):
             target = title['game']
             if game in target and ctx.author.name in title['name']:
                 list_of_games.update_one({"_id":ObjectId(obj_id)},{"$pull" : {"number":ctx.author.id, "name":ctx.author.name}})
-                await ctx.send(f'{ctx.author.name} removed from {game}!')    
+                await ctx.send(f'{ctx.author.name} removed from {game}!', delete_after=60)
+                await ctx.message.delete(delay=1)    
             elif  game in target and ctx.author.name not in title['name']:
-                await ctx.send(f'You are not on {game}\'s game list!')
+                await ctx.send(f'You are not on {game}\'s game list!', delete_after=60)
+                await ctx.message.delete(delay=1)
     else:
-        await ctx.send(f'Are you who you say you are?! 😵')
+        await ctx.send(f'{ctx.author.name}, are you who you say you are?! 😵', delete_after=60)
+        await ctx.message.delete(delay=1)
 
 
 # List your games command
@@ -180,10 +194,11 @@ async def my_games(ctx):
             if 'name' in title and ctx.author.name in title['name'] and 'image' in title:
                 user = bot.get_user(ctx.author.id) or await bot.fetch_user(ctx.author.id)
                 await user.send(embed=embed)
+                await ctx.message.delete(delay=1)
         return
     else:
-        await ctx.send(f'Are you who you say you are?! 😵')
-
+        await ctx.send(f'{ctx.author.name}, are you who you say you are?! 😵', delete_after=60)
+        await ctx.message.delete(delay=1)
 @bot.command()
 async def gamers(ctx,game):
     '''
@@ -202,7 +217,8 @@ async def gamers(ctx,game):
             if new_id_list is not None:
                 msg = f'{new_id_list}, {author.name} is on playing {game}'
             try:
-                await ctx.send(msg)
+                await ctx.send(msg, delete_after=1200)
+                await ctx.message.delete(delay=1)
             except Exception as e:
                 print(f'await error: {e}')
     return
@@ -215,12 +231,11 @@ async def apologize(ctx, user):
     '''
     if ctx.message.author.guild_permissions.administrator:
         if user:
-            await ctx.send(f'Apologies <@{user}>, my master is busy and will not be able to game at this time.')  
+            await ctx.send(f'Apologies <@{user}>, my master is busy and will not be able to game at this time.', delete_after=600)
+            await ctx.message.delete(delay=1)  
     else:
-        await ctx.send(f'Bitch, you are not my master! Toss me a beer on your way out.')
-
-
-
+        await ctx.send(f'Bitch, you are not my master! Toss me a beer on your way out.', delete_after=60)
+        await ctx.message.delete(delay=1)
 
 # Change the default !help command
 @bot.command()
@@ -271,6 +286,7 @@ async def help(ctx):
         inline=False
     )
     await ctx.send(embed=embed, delete_after=60)
+    await ctx.message.delete(delay=1)
 
 bot.run(TOKEN)
 
