@@ -270,7 +270,7 @@ async def help(ctx):
         value ='Must input the users ID. This command apologizes to the users id that is inserted into the command.',
         inline=False
     )
-    await ctx.send(embed=embed)
+    await ctx.send(embed=embed, delete_after=60)
 
 bot.run(TOKEN)
 
