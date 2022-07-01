@@ -74,7 +74,8 @@ async def list_games(ctx):
         )
         embed.set_image(url=f'{game["image"]}')
         if game and 'image' in game:
-            await ctx.send(embed=embed)
+            user = bot.get_user(ctx.author.id) or await bot.fetch_user(ctx.author.id)
+            await user.send(embed=embed)
         else:
             await ctx.send(f'{game["game"]}')
     return
@@ -150,9 +151,20 @@ async def my_games(ctx):
     if ctx.author == ctx.author:
         games = list_of_games.find({})
         for title in games:
-            target = title['game']
-            if 'name' in title and ctx.author.name in title['name']:
-                await ctx.send(f'{target}')
+            embed = discord.Embed(
+            title = 'Game Card',
+            description = '🕹 🎮',
+            color = discord.Color.red()
+            )
+            embed.add_field(
+            name=f'{title["game"]}',
+            value = '🎮',
+            inline=False
+            )
+            embed.set_image(url=f'{title["image"]}')
+            if 'name' in title and ctx.author.name in title['name'] and 'image' in title:
+                user = bot.get_user(ctx.author.id) or await bot.fetch_user(ctx.author.id)
+                await user.send(embed=embed)
         return
     else:
         await ctx.send(f'Are you who you say you are?! 😵')
