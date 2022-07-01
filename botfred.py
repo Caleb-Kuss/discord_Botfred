@@ -28,28 +28,29 @@ list_of_games = db.games_list
 
 # add game command
 @bot.command()
-async def add_game(ctx, game, image):
+async def add_game(ctx, game, image, description):
     '''
-    !add_game somegame This command will add a game DO NOT use spaces in the Title. 
+    !add_game "somegame" "(URL for the image)" "game description"  you must wrap all parameters in quotes. This command will add a game, image, and a description. 
     '''
-    game = game.lower()
+    game = game.upper()
     if ctx.message.author.guild_permissions.administrator:
         if list_of_games.find_one({"game":game}):
             await ctx.send(f"The game {game} already exists in the database!")
         else:    
-            add_game_to_DB(game, image)
+            add_game_to_DB(game, image, description)
             await ctx.send(f"SUCCESS!")
     else:
         await ctx.send(f"Only an administrator can add a game")
 
 # add game to DB
-def add_game_to_DB(game,image):
-    game = game.lower()
+def add_game_to_DB(game,image, description):
+    game = game.upper()
     record = {
             'game': game,
             'name': [],
             'number': [],
-            'image': image
+            'image': image,
+            'description': description,
             }
     list_of_games.insert_one(record)
 
@@ -57,36 +58,50 @@ def add_game_to_DB(game,image):
 @bot.command()
 async def list_games(ctx):
     '''
-    !list_games  This command will list the Titles and print an image of all the games in the DataBase
+    !list_games  This command will list the Titles, image, description and gamers of all the games in the DataBase.
     '''
     games = list_of_games.find({})
     for game in games: 
-
+        gamers = game['name']
+        gamers_list = (', ').join(map(str, gamers))
+        # Card for games with gamers
         embed = discord.Embed(
         title = 'Game Card',
-        description = '🕹 🎮',
+        description = f'🕹 🎮\n Gamers: {gamers_list} ',
         color = discord.Color.red()
         )
         embed.add_field(
-            name=f'{game["game"]}',
-            value = '🎮',
+            name=f'{game["game"]}:',
+            value = f'{game["description"]}',
             inline=False
         )
         embed.set_image(url=f'{game["image"]}')
-        if game and 'image' in game:
+        # card for games with no gamers
+        empty_gamers = discord.Embed(
+        title = 'Game Card',
+        description = f'🕹 🎮\n No gamers are assigned currently!',
+        color = discord.Color.red()
+        )
+        empty_gamers.add_field(
+            name=f'{game["game"]}:',
+            value = f'{game["description"]}',
+            inline=False
+        )
+        empty_gamers.set_image(url=f'{game["image"]}')
+        if gamers_list != '':
             user = bot.get_user(ctx.author.id) or await bot.fetch_user(ctx.author.id)
             await user.send(embed=embed)
         else:
-            await ctx.send(f'{game["game"]}')
+            await user.send(embed=empty_gamers)
     return
 #remove games command
 @bot.command()
 async def remove_game(ctx, game):
     '''
-    **ADMIN ONLY** !remove_game  This command will remove the Title of the game in the DataBase
+    **ADMIN ONLY** !remove_game  This command will remove the game and its contents in the DataBase.
     
     '''
-    game = game.lower()
+    game = game.upper()
     if ctx.message.author.guild_permissions.administrator:
         games = list_of_games.find({})
         for title in games:
@@ -103,10 +118,10 @@ async def remove_game(ctx, game):
 @bot.command()
 async def add_to_game(ctx, game):
     '''
-    !add_to_game  This command will add you to a games list
+    !add_to_game  This command will add you to a games list.
     
     '''
-    game = game.lower()
+    game = game.upper()
     if ctx.author == ctx.author:
         games = list_of_games.find({})
         for title in games:
@@ -125,7 +140,7 @@ async def add_to_game(ctx, game):
 @bot.command()
 async def remove_from_game(ctx, game):
     '''
-    !remove_from_game  This command will remove you from a games list
+    !remove_from_game  This command will remove you from a games list.
     
     '''
     if ctx.author == ctx.author:
@@ -133,10 +148,10 @@ async def remove_from_game(ctx, game):
         for title in games:
             obj_id= title['_id']
             target = title['game']
-            if target == game and ctx.author.name in title['name']:
+            if game in target and ctx.author.name in title['name']:
                 list_of_games.update_one({"_id":ObjectId(obj_id)},{"$pull" : {"number":ctx.author.id, "name":ctx.author.name}})
                 await ctx.send(f'{ctx.author.name} removed from {game}!')    
-            elif  target == game and ctx.author.name not in title['name']:
+            elif  game in target and ctx.author.name not in title['name']:
                 await ctx.send(f'You are not on {game}\'s game list!')
     else:
         await ctx.send(f'Are you who you say you are?! 😵')
@@ -146,7 +161,7 @@ async def remove_from_game(ctx, game):
 @bot.command()
 async def my_games(ctx):
     '''
-    !my_games command will list the games you are apart of.
+    !my_games This command will send you a list of the games you are apart of.
     '''
     if ctx.author == ctx.author:
         games = list_of_games.find({})
@@ -158,7 +173,7 @@ async def my_games(ctx):
             )
             embed.add_field(
             name=f'{title["game"]}',
-            value = '🎮',
+            value = f'{title["description"]}',
             inline=False
             )
             embed.set_image(url=f'{title["image"]}')
@@ -172,20 +187,17 @@ async def my_games(ctx):
 @bot.command()
 async def gamers(ctx,game):
     '''
-    !gamers somegame alerts all users in the game list you are online and playing the game specified.
+    !gamers somegame This command alerts all users in the game list you are online and playing the game specified.
     '''
     msg = 'This game list is pretty lonely 😢'
-    game = game.lower()
+    game = game.upper()
     author = ctx.author
     games = list_of_games.find({})
     for dict in games:
         num = dict.get('number')
         if game == dict['game'] and author.id in num:
-            print(f'id: {author.id}')
             num.remove(author.id)
-            print(f'num: {num}')
             id_list_as_string = '> <@'.join(map(str, num))
-            print(f'list string: {id_list_as_string}')
             new_id_list = None if id_list_as_string == '' else f'<@{id_list_as_string}>'
             if new_id_list is not None:
                 msg = f'{new_id_list}, {author.name} is on playing {game}'
@@ -199,7 +211,7 @@ async def gamers(ctx,game):
 @bot.command()
 async def apologize(ctx, user):
     '''
-    !apologize This is for NoPurps
+    !apologize **ADMIN ONLY**
     '''
     if ctx.message.author.guild_permissions.administrator:
         if user:
@@ -219,43 +231,43 @@ async def help(ctx):
         color = discord.Color.red()
     )
     embed.add_field(
-        name='!add_game "somegame" **ADMIN ONLY**',
-        value = 'This command will add a game to the list of games DO NOT use spaces in the title of the game.',
+        name='!add_game "somegame" "(URL for the image)" "game description" **ADMIN ONLY**',
+        value = 'You must wrap all parameters in quotes. This command will add a game, image, and a description.',
         inline=False
     )
     embed.add_field(
         name='!list_games',
-        value = 'This command will list the Titles and print an image of all the games in the DataBase',
+        value = 'This command will list the Titles, image, description and gamers of all the games in the DataBase.',
         inline=False
     )
     embed.add_field(
         name='!remove_game "somegame" **ADMIN ONLY**',
-        value = 'This command will remove the Title of the game in the DataBase.',
+        value = 'This command will remove the game and its contents in the DataBase.',
         inline=False
     )
     embed.add_field(
         name='!add_to_game "somegame"',
-        value = 'This command will add you to a games list.',
+        value = 'You must wrap all parameters in quotes. This command will add you to a games list.',
         inline=False
     )
     embed.add_field(
         name='!remove_from_game "somegame"',
-        value = 'This command will remove you from a games list',
+        value = 'You must wrap all parameters in quotes. This command will remove you from a games list',
         inline=False
     )
     embed.add_field(
         name='!my_games',
-        value = 'command will list the games you are apart of.',
+        value = 'This command will send you a list of the games you are apart of.',
         inline=False
     )
     embed.add_field(
         name='!gamers "somegame"',
-        value = 'alerts all users in the game list you are online and playing the game specified.',
+        value = 'You must wrap all parameters in quotes. This command alerts all users in the game list you are online and playing the game specified.',
         inline=False
     )
     embed.add_field(
-        name = '!apologize',
-        value ='This is for NoPurps',
+        name = '!apologize userid  **ADMIN ONLY**',
+        value ='Must input the users ID. This command apologizes to the users id that is inserted into the command.',
         inline=False
     )
     await ctx.send(embed=embed)
