@@ -28,7 +28,7 @@ list_of_games = db.games_list
 
 # add game command
 @bot.command()
-async def add_game(ctx, game):
+async def add_game(ctx, game, image):
     '''
     !add_game somegame This command will add a game DO NOT use spaces in the Title. 
     '''
@@ -37,18 +37,19 @@ async def add_game(ctx, game):
         if list_of_games.find_one({"game":game}):
             await ctx.send(f"The game {game} already exists in the database!")
         else:    
-            add_game_to_DB(game)
+            add_game_to_DB(game, image)
             await ctx.send(f"SUCCESS!")
     else:
         await ctx.send(f"Only an administrator can add a game")
 
 # add game to DB
-def add_game_to_DB(game):
+def add_game_to_DB(game,image):
     game = game.lower()
     record = {
             'game': game,
             'name': [],
             'number': [],
+            'image': image
             }
     list_of_games.insert_one(record)
 
@@ -56,16 +57,27 @@ def add_game_to_DB(game):
 @bot.command()
 async def list_games(ctx):
     '''
-    !list_games  This command will list the Titles of all the games in the DataBase
+    !list_games  This command will list the Titles and print an image of all the games in the DataBase
     '''
-    # whats going on with the if statement?
     games = list_of_games.find({})
     for game in games: 
-        if game:
-            await ctx.send(f'{game["game"]}')
+
+        embed = discord.Embed(
+        title = 'Game Card',
+        description = '🕹 🎮',
+        color = discord.Color.red()
+        )
+        embed.add_field(
+            name=f'{game["game"]}',
+            value = '🎮',
+            inline=False
+        )
+        embed.set_image(url=f'{game["image"]}')
+        if game and 'image' in game:
+            await ctx.send(embed=embed)
         else:
-            await ctx.send('There are no games yet!')
-  
+            await ctx.send(f'{game["game"]}')
+    return
 #remove games command
 @bot.command()
 async def remove_game(ctx, game):
@@ -201,7 +213,7 @@ async def help(ctx):
     )
     embed.add_field(
         name='!list_games',
-        value = 'This command will list the Titles of all the games in the DataBase.',
+        value = 'This command will list the Titles and print an image of all the games in the DataBase',
         inline=False
     )
     embed.add_field(
