@@ -35,7 +35,7 @@ async def add_game(ctx, game, image, description, err):
     game = game.upper()
     if ctx.message.author.guild_permissions.administrator:
         if list_of_games.find_one({"game":game}):
-            await ctx.send(f"The game {game} already exists in the database!", delete_after=60)
+            await ctx.send(f"That game already exists in the database!", delete_after=60)
             await ctx.message.delete(delay=1)
         else:   
             add_game_to_DB(game, image, description)
@@ -70,11 +70,11 @@ async def list_games(ctx):
         # Card for games with gamers
         embed = discord.Embed(
         title = 'Game Card',
-        description = f'🕹 🎮\n Gamers: {gamers_list} ',
+        description = f'🕹 🎮\n Gamers: {make_title_case(gamers_list)} ',
         color = discord.Color.red()
         )
         embed.add_field(
-            name=f'{game["game"]}:',
+            name=f'{make_title_case(game["game"])}:',
             value = f'{game["description"]}',
             inline=False
         )
@@ -86,7 +86,7 @@ async def list_games(ctx):
         color = discord.Color.red()
         )
         empty_gamers.add_field(
-            name=f'{game["game"]}:',
+            name=f'{make_title_case(game["game"])}:',
             value = f'{game["description"]}',
             inline=False
         )
@@ -111,12 +111,12 @@ async def remove_game(ctx, game):
         games = list_of_games.find({})
         for title in games:
             target = title['game']
-        if game == target:
+        if game in target:
             list_of_games.delete_one({'game': game})
-            await ctx.send(f'{game} was deleted', delete_after=60)
+            await ctx.send(f'{make_title_case(target)} was deleted', delete_after=60)
             await ctx.message.delete(delay=1)
         else:
-            await ctx.send(f'The game {game} was not found', delete_after=60)    
+            await ctx.send(f'The game {make_title_case(target)} was not found', delete_after=60)    
             await ctx.message.delete(delay=1)
     else:
         await ctx.send(f'Bitch, you are not an administrator!', delete_after=60)
@@ -135,18 +135,18 @@ async def add_to_game(ctx, game):
         for title in games:
             obj_id = title['_id']
             target = title['game']
-            if target == game:
+            if game in target:
                 if game not in target:
-                    await ctx.send(f'This {game} does not exist!')
+                    await ctx.send(f'That {make_title_case(target)} does not exist!')
                 elif game in target and ctx.author.name not in title['name']:
                     list_of_games.update_one({"_id":ObjectId(obj_id)},{"$push":{"number":ctx.author.id, 'name':ctx.author.name}})
-                    await ctx.send(f'{ctx.author.name} added to {game}', delete_after=60)
+                    await ctx.send(f'{ctx.author.name} was added to the {make_title_case(target)}\'s list', delete_after=60)
                     await ctx.message.delete(delay=1)
                 else:
-                    await ctx.send(f'{ctx.author.name} is already on {game}\'s game list', delete_after=60),
+                    await ctx.send(f'{ctx.author.name} is already on {make_title_case(target)}\'s game list', delete_after=60),
                     await ctx.message.delete(delay=1)   
     else:
-        await ctx.send(f'You can only add yourself to a game!', delete_after=60)
+        await ctx.send(f'{ctx.author.name} are you who you say you are? 🤐', delete_after=60)
         await ctx.message.delete(delay=1)
 @bot.command()
 async def remove_from_game(ctx, game):
@@ -154,6 +154,7 @@ async def remove_from_game(ctx, game):
     !remove_from_game  This command will remove you from a games list.
     
     '''
+    game = game.upper()
     if ctx.author == ctx.author:
         games = list_of_games.find({})
         for title in games:
@@ -161,10 +162,10 @@ async def remove_from_game(ctx, game):
             target = title['game']
             if game in target and ctx.author.name in title['name']:
                 list_of_games.update_one({"_id":ObjectId(obj_id)},{"$pull" : {"number":ctx.author.id, "name":ctx.author.name}})
-                await ctx.send(f'{ctx.author.name} removed from {game}!', delete_after=60)
+                await ctx.send(f'{ctx.author.name} removed from {make_title_case(target)}!', delete_after=60)
                 await ctx.message.delete(delay=1)    
             elif  game in target and ctx.author.name not in title['name']:
-                await ctx.send(f'You are not on {game}\'s game list!', delete_after=60)
+                await ctx.send(f'You are not on {make_title_case(target)}\'s game list!', delete_after=60)
                 await ctx.message.delete(delay=1)
     else:
         await ctx.send(f'{ctx.author.name}, are you who you say you are?! 😵', delete_after=60)
@@ -186,7 +187,7 @@ async def my_games(ctx):
             color = discord.Color.red()
             )
             embed.add_field(
-            name=f'{title["game"]}',
+            name=f'{make_title_case(title["game"])}',
             value = f'{title["description"]}',
             inline=False
             )
@@ -210,12 +211,12 @@ async def gamers(ctx,game):
     games = list_of_games.find({})
     for dict in games:
         num = dict.get('number')
-        if game == dict['game'] and author.id in num:
+        if game in dict['game'] and author.id in num:
             num.remove(author.id)
             id_list_as_string = '> <@'.join(map(str, num))
             new_id_list = None if id_list_as_string == '' else f'<@{id_list_as_string}>'
             if new_id_list is not None:
-                msg = f'{new_id_list}, {author.name} is on playing {game}'
+                msg = f'{new_id_list}, {author.name} is on playing {make_title_case(dict["game"])}'
             try:
                 await ctx.send(msg, delete_after=1200)
                 await ctx.message.delete(delay=1)
@@ -262,12 +263,12 @@ async def help(ctx):
     )
     embed.add_field(
         name='!add_to_game "somegame"',
-        value = 'You must wrap all parameters in quotes. This command will add you to a games list.',
+        value = 'This command will add you to a games list.',
         inline=False
     )
     embed.add_field(
         name='!remove_from_game "somegame"',
-        value = 'You must wrap all parameters in quotes. This command will remove you from a games list',
+        value = 'This command will remove you from a games list',
         inline=False
     )
     embed.add_field(
@@ -277,7 +278,7 @@ async def help(ctx):
     )
     embed.add_field(
         name='!gamers "somegame"',
-        value = 'You must wrap all parameters in quotes. This command alerts all users in the game list you are online and playing the game specified.',
+        value = 'This command alerts all users in the game list you are online and playing the game specified.',
         inline=False
     )
     embed.add_field(
@@ -288,6 +289,11 @@ async def help(ctx):
     await ctx.send(embed=embed, delete_after=60)
     await ctx.message.delete(delay=1)
 
+def make_title_case(variable):
+    '''
+    Takes a variable and returns it in  Title Case
+    '''
+    return variable.title()
 bot.run(TOKEN)
 
 mongodb.close()
