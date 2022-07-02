@@ -1,3 +1,4 @@
+from unicodedata import name
 import discord
 import os
 from dotenv import load_dotenv
@@ -27,8 +28,8 @@ db = mongodb.played_games
 list_of_games = db.games_list
 
 # add game command
-@bot.command()
-async def add_game(ctx, game, image, description, err):
+@bot.command(name='addgame')
+async def add_game(ctx, game, image, description):
     '''
     !add_game "somegame" "(URL for the image)" "game description"  you must wrap all parameters in quotes. This command will add a game, image, and a description. 
     '''
@@ -58,7 +59,7 @@ def add_game_to_DB(game,image, description):
     list_of_games.insert_one(record)
 
 # List games command
-@bot.command()
+@bot.command(name = 'listgames')
 async def list_games(ctx):
     '''
     !list_games  This command will list the Titles, image, description and gamers of all the games in the DataBase.
@@ -100,7 +101,7 @@ async def list_games(ctx):
             await ctx.message.delete(delay=1)
     return
 #remove games command
-@bot.command()
+@bot.command(name = 'removegame')
 async def remove_game(ctx, game):
     '''
     **ADMIN ONLY** !remove_game  This command will remove the game and its contents in the DataBase.
@@ -123,7 +124,7 @@ async def remove_game(ctx, game):
         await ctx.message.delete(delay=1)    
 
 # add a user to the game list command
-@bot.command()
+@bot.command(name ='addtogame')
 async def add_to_game(ctx, game):
     '''
     !add_to_game  This command will add you to a games list.
@@ -148,7 +149,7 @@ async def add_to_game(ctx, game):
     else:
         await ctx.send(f'{ctx.author.name} are you who you say you are? 🤐', delete_after=60)
         await ctx.message.delete(delay=1)
-@bot.command()
+@bot.command(name = 'removefromgame')
 async def remove_from_game(ctx, game):
     '''
     !remove_from_game  This command will remove you from a games list.
@@ -173,7 +174,7 @@ async def remove_from_game(ctx, game):
 
 
 # List your games command
-@bot.command()
+@bot.command(name='mygames')
 async def my_games(ctx):
     '''
     !my_games This command will send you a list of the games you are apart of.
@@ -247,32 +248,32 @@ async def help(ctx):
         color = discord.Color.red()
     )
     embed.add_field(
-        name='!add_game "somegame" "(URL for the image)" "game description" **ADMIN ONLY**',
+        name='!addgame "somegame" "(URL for the image)" "game description" **ADMIN ONLY**',
         value = 'You must wrap all parameters in quotes. This command will add a game, image, and a description.',
         inline=False
     )
     embed.add_field(
-        name='!list_games',
+        name='!listgames',
         value = 'This command will list the Titles, image, description and gamers of all the games in the DataBase.',
         inline=False
     )
     embed.add_field(
-        name='!remove_game "somegame" **ADMIN ONLY**',
+        name='!removegame "somegame" **ADMIN ONLY**',
         value = 'This command will remove the game and its contents in the DataBase.',
         inline=False
     )
     embed.add_field(
-        name='!add_to_game "somegame"',
-        value = 'This command will add you to a games list.',
+        name='!addtogame "somegame"',
+        value = 'This command will add you to a games list. Use quotes if there are games that are similarly named. ',
         inline=False
     )
     embed.add_field(
-        name='!remove_from_game "somegame"',
+        name='!removefromgame "somegame"',
         value = 'This command will remove you from a games list',
         inline=False
     )
     embed.add_field(
-        name='!my_games',
+        name='!mygames',
         value = 'This command will send you a list of the games you are apart of.',
         inline=False
     )
