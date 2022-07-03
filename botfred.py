@@ -240,13 +240,9 @@ async def apologize(ctx, user):
         await ctx.send(f'Bitch, you are not my master! Toss me a beer on your way out.', delete_after=60)
         await ctx.message.delete(delay=1)
 
-@bot.event
-async def on_ready():
-    print("Bot Is Ready And Online!")
-
 # Bot waits for an image then responds
-@bot.event
-async def on_message(message):
+@bot.listen('on_message')
+async def listener(message):
     if message.author.bot: return
     if len(message.attachments) > 0:
         await message.channel.send(random_phrases(), delete_after=60)
