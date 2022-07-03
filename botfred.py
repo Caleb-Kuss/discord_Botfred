@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from discord.ext import commands
 from pymongo import MongoClient
 from bson import ObjectId
+import random
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
@@ -239,6 +240,24 @@ async def apologize(ctx, user):
         await ctx.send(f'Bitch, you are not my master! Toss me a beer on your way out.', delete_after=60)
         await ctx.message.delete(delay=1)
 
+@bot.event
+async def on_ready():
+    print("Bot Is Ready And Online!")
+
+# Bot waits for an image then responds
+@bot.event
+async def on_message(message):
+    if message.author.bot: return
+    if len(message.attachments) > 0:
+        await message.channel.send(random_phrases(), delete_after=60)
+    if message.content == 'Hello':
+        await message.channel.send('Hello there!', delete_after=60)
+        await message.delete(delay = 60)
+    if message.content == 'Hello there':
+        await message.channel.send('...General Kenobi!', delete_after=60)
+        await message.delete(delay = 60)
+
+
 # Change the default !help command
 @bot.command()
 async def help(ctx):
@@ -295,6 +314,17 @@ def make_title_case(variable):
     Takes a variable and returns it in  Title Case
     '''
     return variable.title()
+
+
+def random_phrases():
+    '''
+    This is used to generate random phrases 
+    for the bot event when an image is registered in the chat.
+    '''
+    phrases =['Haha! good one.','Meh, I have seen better','You belong in the brig for that post.',
+    'LOL! you have me dieing with that one.','You are my new source for meme content.', 'You should be ashamed of yourself.']    
+    return random.choice(phrases)
+
 bot.run(TOKEN)
 
 mongodb.close()
