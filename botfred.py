@@ -247,10 +247,13 @@ async def listener(message):
     it also listens to "hello" and "Hello There" and responds with a star wars meme.
     '''
     images =memes.find({})
+    if message.author.bot: return
+    if message.content == 'Fuck you fred':
+        await message.channel.send(f'No, fuck you {message.author.name}.', delete_after=120)
+        await message.delete(delay= 120)
+    if len(message.attachments) > 0:
+        await message.channel.send(random_phrases(), delete_after=300)
     for meme in images:
-        if message.author.bot: return
-        if len(message.attachments) > 0:
-            await message.channel.send(random_phrases(), delete_after=60)
         if message.content == 'Hello':
             obi = meme['Obi']
             await message.channel.send(obi, delete_after=30)
@@ -259,6 +262,7 @@ async def listener(message):
             grievous = meme['Grievous']
             await message.channel.send(grievous, delete_after=30)
             await message.delete(delay = 60)
+    
     return
 
 # Change the default !help command
