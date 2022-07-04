@@ -1,4 +1,3 @@
-from unicodedata import name
 import discord
 import os
 from dotenv import load_dotenv
@@ -25,9 +24,10 @@ except:
 
 # Accessing the DB Named played_games
 db = mongodb.played_games
-# Accessing the DB Collection inside of played_games
+# Accessing the DB Collection of users and games
 list_of_games = db.games_list
-
+# Access the DB Collection of memes
+memes = db.images
 # add game command
 @bot.command(name='addgame')
 async def add_game(ctx, game, image, description):
@@ -138,15 +138,14 @@ async def add_to_game(ctx, game):
             obj_id = title['_id']
             target = title['game']
             if game in target:
-                if game not in target:
-                    await ctx.send(f'That {make_title_case(target)} does not exist!')
-                elif game in target and ctx.author.name not in title['name']:
+                if game in target and ctx.author.name not in title['name']:
                     list_of_games.update_one({"_id":ObjectId(obj_id)},{"$push":{"number":ctx.author.id, 'name':ctx.author.name}})
-                    await ctx.send(f'{ctx.author.name} was added to the {make_title_case(target)}\'s list', delete_after=60)
+                    await ctx.send(f'{ctx.author.name} was added to {make_title_case(target)}\'s game list', delete_after=60)
                     await ctx.message.delete(delay=1)
                 else:
                     await ctx.send(f'{ctx.author.name} is already on {make_title_case(target)}\'s game list', delete_after=60),
-                    await ctx.message.delete(delay=1)   
+                    await ctx.message.delete(delay=1)
+        return
     else:
         await ctx.send(f'{ctx.author.name} are you who you say you are? 🤐', delete_after=60)
         await ctx.message.delete(delay=1)
@@ -169,6 +168,7 @@ async def remove_from_game(ctx, game):
             elif  game in target and ctx.author.name not in title['name']:
                 await ctx.send(f'You are not on {make_title_case(target)}\'s game list!', delete_after=60)
                 await ctx.message.delete(delay=1)
+        return
     else:
         await ctx.send(f'{ctx.author.name}, are you who you say you are?! 😵', delete_after=60)
         await ctx.message.delete(delay=1)
@@ -240,19 +240,26 @@ async def apologize(ctx, user):
         await ctx.send(f'Bitch, you are not my master! Toss me a beer on your way out.', delete_after=60)
         await ctx.message.delete(delay=1)
 
-# Bot waits for an image then responds
 @bot.listen('on_message')
 async def listener(message):
-    if message.author.bot: return
-    if len(message.attachments) > 0:
-        await message.channel.send(random_phrases(), delete_after=60)
-    if message.content == 'Hello':
-        await message.channel.send('Hello there!', delete_after=60)
-        await message.delete(delay = 60)
-    if message.content == 'Hello there':
-        await message.channel.send('...General Kenobi!', delete_after=60)
-        await message.delete(delay = 60)
-
+    '''
+    This function listents for a message that contains an attachment and then says something from the random_phrase func.
+    it also listens to "hello" and "Hello There" and responds with a star wars meme.
+    '''
+    images =memes.find({})
+    for meme in images:
+        if message.author.bot: return
+        if len(message.attachments) > 0:
+            await message.channel.send(random_phrases(), delete_after=60)
+        if message.content == 'Hello':
+            obi = meme['Obi']
+            await message.channel.send(obi, delete_after=30)
+            await message.delete(delay = 60)
+        if message.content == 'Hello there':
+            grievous = meme['Grievous']
+            await message.channel.send(grievous, delete_after=30)
+            await message.delete(delay = 60)
+    return
 
 # Change the default !help command
 @bot.command()
