@@ -246,22 +246,14 @@ async def listener(message):
     This function listents for a message that contains an attachment and then says something from the random_phrase func.
     it also listens to "hello" and "Hello There" and responds with a star wars meme.
     '''
-    images =memes.find({})
     if message.author.bot: return
+    await star_wars_listener(message)
+    await deep_rock_listener(message)
     if message.content == 'Fuck you fred':
         await message.channel.send(f'No, fuck you {message.author.name}.', delete_after=120)
         await message.delete(delay= 120)
     if len(message.attachments) > 0:
         await message.channel.send(random_phrases(), delete_after=300)
-    for meme in images:
-        if message.content == 'Hello':
-            obi = meme['Obi']
-            await message.channel.send(obi, delete_after=30)
-            await message.delete(delay = 60)
-        if message.content == 'Hello there':
-            grievous = meme['Grievous']
-            await message.channel.send(grievous, delete_after=30)
-            await message.delete(delay = 60)
     
     return
 
@@ -316,6 +308,87 @@ async def help(ctx):
     await ctx.send(embed=embed, delete_after=60)
     await ctx.message.delete(delay=1)
 
+@bot.command()
+async def gif(ctx):
+    embed = discord.Embed(
+        title = 'The gif Section',
+        description = 'Welcome to the gif section. Here you will find all of the phrases to activate a GIF. Type the phrase as you see in this section.\n (Bold words are the phrases.)',
+        color = discord.Color.red()
+    )
+    embed.add_field(
+        name='Hello',
+        value = ' Obi Hello there GIF.',
+        inline=False
+    )
+    embed.add_field(
+        name='Hello there',
+        value = 'Grievous saying General Kenobi.',
+        inline=False
+    )
+    embed.add_field(
+        name='I find your lack of faith disturbing.',
+        value = 'Vader choking a dude out',
+        inline=False
+    )
+    embed.add_field(
+        name='No!',
+        value = 'Luke learning who his daddy is.',
+        inline=False
+    )
+    embed.add_field(
+        name="Don't try it",
+        value = 'Obi saying dont try it.',
+        inline=False
+    )
+    embed.add_field(
+        name='You underestimate my power',
+        value = 'Anakin saying the phrase.',
+        inline=False
+    )
+    embed.add_field(
+        name='You were the chosen one',
+        value = 'Obi saying the phrase.',
+        inline=False
+    )
+    embed.add_field(
+        name = 'I hate you',
+        value ='Anakin phrase.',
+        inline=False
+    )
+    embed.add_field(
+        name = "It's a trap",
+        value ='Ackbar phrase.',
+        inline=False
+    )
+    embed.add_field(
+        name = 'Execute order 66',
+        value ='Sidious phrase.',
+        inline=False
+    )
+    embed.add_field(
+        name = 'I am the senate',
+        value ='Sidious phrase.',
+        inline=False
+    )
+    embed.add_field(
+        name = "It's treason then",
+        value ='Sidious phrase.',
+        inline=False
+    )
+    embed.add_field(
+        name = 'So uncivilized',
+        value ='Obi phrase.',
+        inline=False
+    )
+    embed.add_field(
+        name = "Beer's on me",
+        value ='Deep Rock Galactic phrase.',
+        inline=False
+    )
+    await ctx.send(embed=embed, delete_after=60)
+    await ctx.message.delete(delay=1)
+    
+
 def make_title_case(variable):
     '''
     Takes a variable and returns it in  Title Case
@@ -331,6 +404,74 @@ def random_phrases():
     phrases =['Haha! good one.','Meh, I have seen better','You belong in the brig for that post.',
     'LOL! you have me dieing with that one.','You are my new source for meme content.', 'You should be ashamed of yourself.']    
     return random.choice(phrases)
+
+async def star_wars_listener(message):
+    images =memes.find({})
+    for meme in images:
+        if message.content == 'Hello':
+            obi = meme['Obi']
+            await message.channel.send(obi, delete_after=30)
+            await message.delete(delay = 1)
+        if message.content == 'Hello there':
+            grievous = meme['Grievous']
+            await message.channel.send(grievous, delete_after=30)
+            await message.delete(delay = 1)
+        if message.content == 'I find your lack of faith disturbing':
+            faith = meme['Faith']
+            await message.channel.send(faith, delete_after=30)
+            await message.delete(delay = 1)
+        if message.content == 'No!':
+            no = meme['No']
+            await message.channel.send(no, delete_after=30)
+            await message.delete(delay = 1)
+        if message.content == 'Don\'t try it':
+            try_it = meme['try_it']
+            await message.channel.send(try_it, delete_after=30)
+            await message.delete(delay = 1)
+        if message.content == 'You underestimate my power':
+            power = meme['power']
+            await message.channel.send(power, delete_after=30)
+            await message.delete(delay = 1)
+        if message.content == 'You were the chosen one':
+            chosen = meme['chosen']
+            await message.channel.send(chosen, delete_after=30)
+            await message.delete(delay = 1)
+        if message.content == 'I hate you':
+            hate_you = meme['hate_you']
+            await message.channel.send(hate_you, delete_after=30)
+            await message.delete(delay = 1)
+        if message.content == 'It\'s a trap':
+            trap = meme['trap']
+            await message.channel.send(trap, delete_after=30)
+            await message.delete(delay = 1)
+        if message.content == 'Execute order 66':
+            order_66 = meme['order_66']
+            await message.channel.send(order_66, delete_after=30)
+            await message.delete(delay = 1)
+        if message.content == 'I am the senate':
+            senate = meme['senate']
+            await message.channel.send(senate, delete_after=30)
+            await message.delete(delay = 1)
+        if message.content == 'It\'s treason then':
+            treason = meme['treason']
+            await message.channel.send(treason, delete_after=30)
+            await message.delete(delay = 1)
+        if message.content == 'So uncivilized':
+            uncivilized = meme['uncivilized']
+            await message.channel.send(uncivilized, delete_after=30)
+            await message.delete(delay = 1)
+    return
+async def deep_rock_listener(message):
+    images =memes.find({})
+    for meme in images:
+        if message.content == 'Beer\'s on me':
+            beer = meme['beer']
+            await message.channel.send(beer, delete_after=30)
+            await message.delete(delay = 1)
+    return
+
+
+        
 
 bot.run(TOKEN)
 
