@@ -312,13 +312,13 @@ async def help(ctx):
 @bot.command()
 async def gif(ctx):
     embed = discord.Embed(
-        title = 'The gif Section',
-        description = 'Welcome to the gif section. Here you will find all of the phrases to activate a GIF. Type the phrase as you see in this section.\n (Bold words are the phrases.)',
+        title = 'The GIF Section',
+        description = 'Welcome to the GIF section. Here you will find all of the phrases to activate a GIF. Type the phrase as you see in this section.\n (Bold words are the phrases.)',
         color = discord.Color.red()
     )
     embed.add_field(
         name='Hello',
-        value = ' Obi Hello there GIF.',
+        value = ' Obi, Hello there.',
         inline=False
     )
     embed.add_field(
@@ -327,7 +327,7 @@ async def gif(ctx):
         inline=False
     )
     embed.add_field(
-        name='I find your lack of faith disturbing.',
+        name='I find your lack of faith disturbing',
         value = 'Vader choking a dude out',
         inline=False
     )
@@ -337,18 +337,18 @@ async def gif(ctx):
         inline=False
     )
     embed.add_field(
-        name="Don't try it",
+        name="Dont try it",
         value = 'Obi saying dont try it.',
         inline=False
     )
     embed.add_field(
         name='You underestimate my power',
-        value = 'Anakin saying the phrase.',
+        value = 'Anakin phrase.',
         inline=False
     )
     embed.add_field(
         name='You were the chosen one',
-        value = 'Obi saying the phrase.',
+        value = 'Obi phrase.',
         inline=False
     )
     embed.add_field(
@@ -357,7 +357,7 @@ async def gif(ctx):
         inline=False
     )
     embed.add_field(
-        name = "It's a trap",
+        name = "Its a trap",
         value ='Ackbar phrase.',
         inline=False
     )
@@ -372,7 +372,7 @@ async def gif(ctx):
         inline=False
     )
     embed.add_field(
-        name = "It's treason then",
+        name = "Its treason then",
         value ='Sidious phrase.',
         inline=False
     )
@@ -382,7 +382,7 @@ async def gif(ctx):
         inline=False
     )
     embed.add_field(
-        name = "Beer's on me",
+        name = "Beers on me",
         value ='Deep Rock Galactic phrase.',
         inline=False
     )
@@ -397,7 +397,7 @@ async def gif(ctx):
         inline=False
     )
     embed.add_field(
-        name = "I'm on",
+        name = "Im on",
         value ='Deep Rock Galactic phrase.',
         inline=False
     )
@@ -445,7 +445,7 @@ async def star_wars_listener(message):
             no = meme['No']
             await message.channel.send(no, delete_after=30)
             await message.delete(delay = 1)
-        if message.content == 'Don\'t try it':
+        if message.content == 'Dont try it':
             try_it = meme['try_it']
             await message.channel.send(try_it, delete_after=30)
             await message.delete(delay = 1)
@@ -461,7 +461,7 @@ async def star_wars_listener(message):
             hate_you = meme['hate_you']
             await message.channel.send(hate_you, delete_after=30)
             await message.delete(delay = 1)
-        if message.content == 'It\'s a trap':
+        if message.content == 'Its a trap':
             trap = meme['trap']
             await message.channel.send(trap, delete_after=30)
             await message.delete(delay = 1)
@@ -473,7 +473,7 @@ async def star_wars_listener(message):
             senate = meme['senate']
             await message.channel.send(senate, delete_after=30)
             await message.delete(delay = 1)
-        if message.content == 'It\'s treason then':
+        if message.content == 'Its treason then':
             treason = meme['treason']
             await message.channel.send(treason, delete_after=30)
             await message.delete(delay = 1)
@@ -488,7 +488,7 @@ async def deep_rock_listener(message):
     '''
     images =memes.find({})
     for meme in images:
-        if message.content == 'Beer\'s on me':
+        if message.content == 'Beers on me':
             beer = meme['beer']
             await message.channel.send(beer, delete_after=30)
             await message.delete(delay = 1)
@@ -500,7 +500,7 @@ async def deep_rock_listener(message):
             karl = meme['Karl']
             await message.channel.send(karl, delete_after=30)
             await message.delete(delay = 1)
-        if message.content == 'I\'m on':
+        if message.content == 'Im on':
             gunk = meme['gunk']
             await message.channel.send(gunk, delete_after=30)
             await message.delete(delay = 1)
