@@ -397,11 +397,6 @@ async def gif(ctx):
         inline=False
     )
     embed.add_field(
-        name = "Need to wait for my flare to recharge!",
-        value ='Deep Rock Galactic phrase.',
-        inline=False
-    )
-    embed.add_field(
         name = "I'm on",
         value ='Deep Rock Galactic phrase.',
         inline=False
@@ -504,10 +499,6 @@ async def deep_rock_listener(message):
         if message.content == 'For Karl!':
             karl = meme['Karl']
             await message.channel.send(karl, delete_after=30)
-            await message.delete(delay = 1)
-        if message.content == 'Need to wait for my flare to recharge':
-            arm = meme['arm']
-            await message.channel.send(arm, delete_after=30)
             await message.delete(delay = 1)
         if message.content == 'I\'m on':
             gunk = meme['gunk']
