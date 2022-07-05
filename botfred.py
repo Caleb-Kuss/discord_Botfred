@@ -305,7 +305,8 @@ async def help(ctx):
         value ='Must input the users ID. This command apologizes to the users id that is inserted into the command.',
         inline=False
     )
-    await ctx.send(embed=embed, delete_after=60)
+    user = bot.get_user(ctx.author.id) or await bot.fetch_user(ctx.author.id)
+    await user.send(embed=embed)
     await ctx.message.delete(delay=1)
 
 @bot.command()
@@ -385,7 +386,13 @@ async def gif(ctx):
         value ='Deep Rock Galactic phrase.',
         inline=False
     )
-    await ctx.send(embed=embed, delete_after=60)
+    embed.add_field(
+        name = "Rock and stone!",
+        value ='Deep Rock Galactic phrase.',
+        inline=False
+    )
+    user = bot.get_user(ctx.author.id) or await bot.fetch_user(ctx.author.id)
+    await user.send(embed=embed)
     await ctx.message.delete(delay=1)
     
 
@@ -402,10 +409,14 @@ def random_phrases():
     for the bot event when an image is registered in the chat.
     '''
     phrases =['Haha! good one.','Meh, I have seen better','You belong in the brig for that post.',
-    'LOL! you have me dieing with that one.','You are my new source for meme content.', 'You should be ashamed of yourself.']    
+    'LOL! you have me dieing with that one.','You are my new source for meme content.',
+    'You should be ashamed of yourself.']    
     return random.choice(phrases)
 
 async def star_wars_listener(message):
+    '''
+    Long list of possible phrases to say, that call a GIF as a response.
+    '''
     images =memes.find({})
     for meme in images:
         if message.content == 'Hello':
@@ -462,11 +473,18 @@ async def star_wars_listener(message):
             await message.delete(delay = 1)
     return
 async def deep_rock_listener(message):
+    '''
+    A list of possible phrases to say, that call a GIF as a response.
+    '''
     images =memes.find({})
     for meme in images:
         if message.content == 'Beer\'s on me':
             beer = meme['beer']
             await message.channel.send(beer, delete_after=30)
+            await message.delete(delay = 1)
+        if message.content == 'Rock and stone!':
+            rock = meme['Rock']
+            await message.channel.send(rock, delete_after=30)
             await message.delete(delay = 1)
     return
 
