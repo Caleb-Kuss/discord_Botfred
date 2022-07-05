@@ -207,7 +207,7 @@ async def gamers(ctx,game):
     '''
     !gamers somegame This command alerts all users in the game list you are online and playing the game specified.
     '''
-    msg = 'This game list is pretty lonely 😢'
+    msg = f'The gamers list for {game} is pretty lonely 😢'
     game = game.upper()
     author = ctx.author
     games = list_of_games.find({})
@@ -262,7 +262,7 @@ async def listener(message):
 async def help(ctx):
     embed = discord.Embed(
         title = 'The Help Section',
-        description = 'Welcome to the help section. Here you will find all of the commands for the server.',
+        description = 'Welcome to the help section. Here you will find all of the commands for the server.\n If you want to see a list of GIF commands type !gif.',
         color = discord.Color.red()
     )
     embed.add_field(
@@ -391,6 +391,21 @@ async def gif(ctx):
         value ='Deep Rock Galactic phrase.',
         inline=False
     )
+    embed.add_field(
+        name = "For Karl!",
+        value ='Deep Rock Galactic phrase.',
+        inline=False
+    )
+    embed.add_field(
+        name = "Need to wait for my flare to recharge!",
+        value ='Deep Rock Galactic phrase.',
+        inline=False
+    )
+    embed.add_field(
+        name = "I'm on",
+        value ='Deep Rock Galactic phrase.',
+        inline=False
+    )
     user = bot.get_user(ctx.author.id) or await bot.fetch_user(ctx.author.id)
     await user.send(embed=embed)
     await ctx.message.delete(delay=1)
@@ -486,10 +501,19 @@ async def deep_rock_listener(message):
             rock = meme['Rock']
             await message.channel.send(rock, delete_after=30)
             await message.delete(delay = 1)
+        if message.content == 'For Karl!':
+            karl = meme['Karl']
+            await message.channel.send(karl, delete_after=30)
+            await message.delete(delay = 1)
+        if message.content == 'Need to wait for my flare to recharge':
+            arm = meme['arm']
+            await message.channel.send(arm, delete_after=30)
+            await message.delete(delay = 1)
+        if message.content == 'I\'m on':
+            gunk = meme['gunk']
+            await message.channel.send(gunk, delete_after=30)
+            await message.delete(delay = 1)
     return
-
-
-        
 
 bot.run(TOKEN)
 
