@@ -121,7 +121,7 @@ async def remove_game(ctx, game):
             await ctx.send(f'The game {make_title_case(target)} was not found', delete_after=60)    
             await ctx.message.delete(delay=1)
     else:
-        await ctx.send(f'Bitch, you are not an administrator!', delete_after=60)
+        await ctx.send(f'You are not an administrator!', delete_after=60)
         await ctx.message.delete(delay=1)    
 
 # add a user to the game list command
@@ -234,24 +234,21 @@ async def apologize(ctx, user):
     '''
     if ctx.message.author.guild_permissions.administrator:
         if user:
-            await ctx.send(f'Apologies <@{user}>, my master is busy and will not be able to game at this time.', delete_after=600)
+            await ctx.send(f'Apologies <@{user}>, my creator is busy and will not be able to game at this time.', delete_after=600)
             await ctx.message.delete(delay=1)  
     else:
-        await ctx.send(f'Bitch, you are not my master! Toss me a beer on your way out.', delete_after=60)
+        await ctx.send(f'You are not the creator! Toss me a beer on your way out.', delete_after=60)
         await ctx.message.delete(delay=1)
 
 @bot.listen('on_message')
 async def listener(message):
     '''
-    This function listents for a message that contains an attachment and then says something from the random_phrase func.
+    This function listens for a message that contains an attachment and then says something from the random_phrase func.
     it also listens to "hello" and "Hello There" and responds with a star wars meme.
     '''
     if message.author.bot: return
     await star_wars_listener(message)
     await deep_rock_listener(message)
-    if message.content == 'Fuck you fred':
-        await message.channel.send(f'No, fuck you {message.author.name}.', delete_after=120)
-        await message.delete(delay= 120)
     if len(message.attachments) > 0:
         await message.channel.send(random_phrases(), delete_after=300)
     
