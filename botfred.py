@@ -9,7 +9,7 @@ import random
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
 URI = os.getenv('URI')
-terraria_role = 1031934587598811226
+terraria_role = 1031702038578466899
 
 # Command that initiates BOT
 bot = commands.Bot(command_prefix='!')
