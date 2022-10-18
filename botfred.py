@@ -175,12 +175,12 @@ async def remove_from_game(ctx, game):
 
 # Bot fred tells other Terraria gamers that NoPurps is on the server.
 @bot.command(name='terraria')
-async def alert_terraria(ctx, user):
+async def alert_terraria(ctx):
     '''
     !terraria will prompt BotFred to alert other gamers they are on the terraria server.
     '''
     if ctx.author == ctx.author:
-        await ctx.send(terraria_phrases(user), delete_after=600)
+        await ctx.send(terraria_phrases(ctx.author.name), delete_after=600)
         await ctx.message.delete(delay=1)
 
 
