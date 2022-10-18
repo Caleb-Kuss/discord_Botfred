@@ -9,6 +9,7 @@ import random
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
 URI = os.getenv('URI')
+terraria_role = 1031934587598811226
 
 # Command that initiates BOT
 bot = commands.Bot(command_prefix='!')
@@ -439,8 +440,8 @@ def terraria_phrases(gamer):
     '''
     This function randomly selects a phrase for BotFred to spit out to alert other Terraria gamers the alerter is on.
     '''
-    phrases =[f'Hey! {gamer} is online. Go help them kill shit!',f'{gamer} is probably about to die and will need assistance getting their gear back. ',f'Let\'s go! {gamer} is ready kill some bosses.',
-    f'Anyone going to join {gamer}?',f'Quite slacking and help {gamer} defend home base from the goblins!']    
+    phrases =[f'<@&{terraria_role}> Hey! {gamer} is online. Go help them kill shit!',f'<@&{terraria_role}> {gamer} is probably about to die and will need assistance getting their gear back. ',f'<@&{terraria_role}> Let\'s go! {gamer} is ready kill some bosses.',
+    f'<@&{terraria_role}> Anyone going to join {gamer}?',f'<@&{terraria_role}> Quite slacking and help {gamer} defend home base from the goblins!']    
     return random.choice(phrases)
 
 async def star_wars_listener(message):
