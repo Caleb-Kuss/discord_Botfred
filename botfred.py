@@ -173,6 +173,16 @@ async def remove_from_game(ctx, game):
         await ctx.send(f'{ctx.author.name}, are you who you say you are?! 😵', delete_after=60)
         await ctx.message.delete(delay=1)
 
+# Bot fred tells other Terraria gamers that NoPurps is on the server.
+@bot.command(name='terraria')
+async def alert_terraria(ctx, user):
+    '''
+    !terraria will prompt BotFred to alert other gamers they are on the terraria server.
+    '''
+    if ctx.author == ctx.author:
+        await ctx.send(terraria_phrases(user), delete_after=600)
+        await ctx.message.delete(delay=1)
+
 
 # List your games command
 @bot.command(name='mygames')
@@ -225,6 +235,9 @@ async def gamers(ctx,game):
             except Exception as e:
                 print(f'await error: {e}')
     return
+
+
+
 
 # BotFred apologizes for master
 @bot.command()
@@ -418,6 +431,16 @@ def random_phrases():
     phrases =['Haha! good one.','Meh, I have seen better','You belong in the brig for that post.',
     'LOL! you have me dieing with that one.','You are my new source for meme content.',
     'You should be ashamed of yourself.']    
+    return random.choice(phrases)
+
+# phrases for Terraria alerts
+
+def terraria_phrases(gamer):
+    '''
+    This function randomly selects a phrase for BotFred to spit out to alert other Terraria gamers the alerter is on.
+    '''
+    phrases =[f'Hey! {gamer} is online. Go help them kill shit!',f'{gamer} is probably about to die and will need assistance getting their gear back. ',f'Let\'s go! {gamer} is ready kill some bosses.',
+    f'Anyone going to join {gamer}?',f'Quite slacking and help {gamer} defend home base from the goblins!']    
     return random.choice(phrases)
 
 async def star_wars_listener(message):
